@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    nome = "icoma.com"
+    return render_template('index.html', site = nome)
 
 def main():
     app.run(port=int(os.environ.get('PORT', 80)))
