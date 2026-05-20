@@ -9,6 +9,10 @@ def index():
     nome = "icoma.com"
     return render_template('index.html', site = nome)
 
+@app.route("/login")
+def login():
+    return render_template('login/login.html')
+
 def main():
     app.run(port=int(os.environ.get('PORT', 80)))
 
