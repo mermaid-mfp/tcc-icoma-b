@@ -1,41 +1,129 @@
 <!doctype html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bootstrap demo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Icoma Technology - Sistema Educacional</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+<body class="landing-page">
 
-<body>
-  <section name="navbar-platform">
-    <nav class="navbar bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-          <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" width="55" height="40"
-            class="d-inline-block align-text-top">
-          icoma.com
-        </a>
-      </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #a66cf7, #8e54e9); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16">
+                        <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917l-7.5-3.5Z"/>
+                        <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466 4.176 9.032Z"/>
+                    </svg>
+                </div>
+                IcomaTechnology
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metodologia">Metodologia</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-custom btn-primary-custom" href="{{ url_for('login') }}">Acessar Plataforma</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
-  </section>
-  <section>
-    Landing Page
-  </section>
-  <footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-      crossorigin="anonymous"></script>
 
-  </footer>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h1 class="hero-title">Aprenda com <span>Rapidez e Eficiência</span></h1>
+                    <p class="hero-subtitle">Descubra o sistema educacional da IcomaTechnology. Transformamos a sua jornada de aprendizado utilizando os pilares da cultura DevOps para garantir resultados ágeis e consistentes.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('login') }}" class="btn btn-custom btn-primary-custom px-4">Começar Agora</a>
+                        <a href="#metodologia" class="btn btn-custom btn-outline-custom px-4 text-decoration-none">Saiba Mais</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image-placeholder">
+                        <div style="text-align: center; color: var(--primary);">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-infinity" viewBox="0 0 16 16" style="opacity: 0.8; margin-bottom: 20px;">
+                                <path d="M5.68 5.792 7.345 7.75 5.681 9.708a2.75 2.75 0 1 1 0-3.916ZM8 6.978 6.416 5.113l-.014-.015a3.75 3.75 0 1 0 0 5.304l.014-.015L8 8.522l1.584 1.865.014.015a3.75 3.75 0 1 0 0-5.304l-.014.015L8 6.978Zm.656.772 1.663-1.958a2.75 2.75 0 1 1 0 3.916L8.656 7.75Z"/>
+                            </svg>
+                            <h4 style="font-weight: 700; color: #6e36c9;">DevOps Education</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="metodologia" class="features-section">
+        <div class="container">
+            <h2 class="section-title">O Jeito <span style="color: var(--primary);">IcomaTechnology</span> de Aprender</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lightning-charge-fill" viewBox="0 0 16 16">
+                              <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Rapidez</h3>
+                        <p class="feature-text">Nosso sistema é projetado para acelerar seu aprendizado, focando no que realmente importa e eliminando redundâncias teóricas desnecessárias.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Eficiência</h3>
+                        <p class="feature-text">Aprenda através de metodologias validadas. Menos tempo na teoria monótona, mais foco em práticas guiadas e resultados concretos em tempo real.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-infinity" viewBox="0 0 16 16">
+                              <path d="M5.68 5.792 7.345 7.75 5.681 9.708a2.75 2.75 0 1 1 0-3.916ZM8 6.978 6.416 5.113l-.014-.015a3.75 3.75 0 1 0 0 5.304l.014-.015L8 8.522l1.584 1.865.014.015a3.75 3.75 0 1 0 0-5.304l-.014.015L8 6.978Zm.656.772 1.663-1.958a2.75 2.75 0 1 1 0 3.916L8.656 7.75Z"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Cultura DevOps</h3>
+                        <p class="feature-text">Aplicamos conceitos de integração contínua (CI), entrega e feedback rápido ao seu processo de estudos. Aprimore suas habilidades continuamente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to action -->
+    <section class="py-5" style="background: linear-gradient(135deg, #a66cf7, #8e54e9); color: white;">
+        <div class="container text-center py-5">
+            <h2 style="font-weight: 700; margin-bottom: 1.5rem; font-size: 2.5rem;">Pronto para transformar seus estudos?</h2>
+            <p style="opacity: 0.9; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; font-size: 1.1rem;">Junte-se à IcomaTechnology e adote as melhores práticas de DevOps para evoluir na sua educação técnica.</p>
+            <a href="{{ url_for('login') }}" class="btn btn-light btn-custom" style="color: var(--primary); padding: 0.8rem 2.5rem; font-size: 1.1rem;">Acessar Plataforma</a>
+        </div>
+    </section>
+
+    <footer class="py-4 text-center" style="background-color: #f8f7fa; color: var(--text-muted); font-size: 0.95rem;">
+        <div class="container">
+            <p class="mb-0">© 2026 IcomaTechnology. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
