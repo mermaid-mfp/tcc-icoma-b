@@ -11,3 +11,5 @@ pip install flask
 pip install flask-cors
 pip install google-generativeai
 npm install update
+npm audit fix --force
+python.exe -m pip install --upgrade pip
