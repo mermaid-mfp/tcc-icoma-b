@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recuperar Senha - Portal do Aluno</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+    <div class="login-card">
+        <div class="brand-icon">
+            <!-- Lock Icon for Security/Recovery -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            </svg>
+        </div>
+        <h2 class="login-title">Recuperar Senha</h2>
+        <p class="login-subtitle">Informe seu e-mail e enviaremos instruções para redefinir sua senha.</p>
+
+        <form method="POST" action="{{ url_for('recovery') }}">
+            {% if error %}
+            <div class="alert alert-danger" role="alert" style="border-radius: 12px; font-size: 0.9rem;">
+                {{ error }}
+            </div>
+            {% endif %}
+            {% if message %}
+            <div class="alert alert-success" role="alert" style="border-radius: 12px; font-size: 0.9rem;">
+                {{ message }}
+            </div>
+            {% endif %}
+            <div class="mb-4">
+                <input type="email" class="form-control custom-input" id="email" name="email" placeholder="Endereço de e-mail" required>
+            </div>
+
+            <div class="d-grid mb-4">
+                <button type="submit" class="btn btn-primary-custom btn-custom">Enviar Link de Recuperação</button>
+            </div>
+            
+            <div class="text-center mt-3">
+                <p class="text-muted" style="font-size: 0.95rem;">Lembrou a senha? <a href="{{ url_for('login') }}" class="forgot-link">Voltar ao Login</a></p>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
