@@ -1,0 +1,251 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Poppins,sans-serif;
+}
+
+body{
+
+    height:100vh;
+
+    background:url("../img/fundo-login.jpg") center center/cover no-repeat;
+
+}
+
+.overlay{
+
+    width:100%;
+    height:100%;
+    background:rgba(2,29,44,.82);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.container{
+
+    width:1100px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.left{
+
+    width:50%;
+}
+
+.logo{
+
+    width:420px;
+
+}
+
+.right{
+
+    width:360px;
+
+}
+
+label{
+
+    color:white;
+
+    font-size:14px;
+
+    margin-bottom:8px;
+
+    display:block;
+
+}
+
+.input-box{
+
+    display:flex;
+
+    align-items:center;
+
+    border-bottom:1px solid rgba(255,255,255,.5);
+
+    margin-bottom:25px;
+
+}
+
+.input-box i{
+
+    color:white;
+
+    margin-right:10px;
+
+}
+
+.input-box input{
+
+    flex:1;
+
+    background:none;
+
+    border:none;
+
+    color:white;
+
+    outline:none;
+
+    padding:12px 0;
+
+}
+
+.input-box input::placeholder{
+
+    color:#cfcfcf;
+
+}
+
+button{
+
+    width:100%;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:5px;
+
+    background:#19ff82;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    background:#0cdf6c;
+
+}
+
+.senha{
+
+    display:block;
+
+    text-align:right;
+
+    color:#dcdcdc;
+
+    text-decoration:none;
+
+    margin:12px 0 25px;
+
+    font-size:14px;
+
+}
+
+.linha{
+
+    display:flex;
+
+    align-items:center;
+
+    color:white;
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+.linha span{
+
+    flex:1;
+
+    height:1px;
+
+    background:#9e9e9e;
+
+}
+
+.google{
+
+    background:white;
+
+    color:#333;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.google img{
+
+    width:22px;
+
+}
+
+p{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    color:white;
+
+    font-size:14px;
+
+}
+
+p a{
+
+    color:#4aa3ff;
+
+    text-decoration:none;
+
+}
+
+@media(max-width:900px){
+
+.container{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.left{
+
+    margin-bottom:60px;
+
+}
+
+.logo{
+
+    width:280px;
+
+}
+
+.right{
+
+    width:90%;
+
+}
+
+}

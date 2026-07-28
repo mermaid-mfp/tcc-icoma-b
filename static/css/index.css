@@ -1,0 +1,242 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#062F42;
+    color:#fff;
+}
+
+/*================ HERO ================*/
+
+.hero{
+    max-width:1200px;
+    margin:auto;
+    padding:80px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:80px;
+}
+
+.hero-text{
+    max-width:500px;
+}
+
+.hero h1{
+    font-size:3rem;
+    line-height:1.2;
+    font-weight:700;
+    margin-bottom:30px;
+}
+
+.btn{
+    display:inline-block;
+    background:#19e05a;
+    color:#062F42;
+    text-decoration:none;
+    padding:14px 40px;
+    border-radius:8px;
+    font-weight:700;
+    transition:.3s;
+}
+
+.btn:hover{
+    background:#11c34c;
+    transform:translateY(-2px);
+}
+
+.hero p{
+    margin-top:18px;
+    font-size:15px;
+    color:#d9d9d9;
+}
+
+.hero p a{
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.hero-image img{
+    width:260px;
+}
+
+/*================ TITULOS ================*/
+
+section{
+    padding:70px 8%;
+}
+
+section h2{
+    width:max-content;
+    margin:0 auto 30px;
+    background:#11425b;
+    padding:10px 28px;
+    border-radius:8px;
+    font-size:20px;
+}
+
+section>p{
+    max-width:760px;
+    margin:auto;
+    text-align:center;
+    line-height:1.8;
+    color:#ededed;
+}
+
+/*================ BENEFICIOS ================*/
+
+.cards{
+    margin-top:50px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+
+.card{
+    background:#fff;
+    color:#222;
+    border-radius:10px;
+    padding:30px;
+    text-align:center;
+}
+
+.card h3{
+    background:#0d4057;
+    color:white;
+    margin:-30px -30px 25px;
+    padding:18px;
+    border-radius:10px 10px 0 0;
+    font-size:18px;
+}
+
+.card p{
+    line-height:1.7;
+    font-size:16px;
+}
+
+/*================ VANTAGENS ================*/
+
+.vantagens-grid{
+    margin-top:45px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:30px;
+}
+
+.box{
+    background:#11425b;
+    border-radius:10px;
+    padding:28px;
+    text-align:center;
+    font-size:18px;
+    line-height:1.6;
+    transition:.3s;
+}
+
+.box:hover{
+    transform:translateY(-5px);
+    background:#16506d;
+}
+
+/*================ FORM ================*/
+
+.cadastro{
+    display:flex;
+    justify-content:center;
+    padding-bottom:100px;
+}
+
+.formulario{
+    width:520px;
+    background:#d9d9d9;
+    border-radius:12px;
+    padding:40px;
+}
+
+.formulario h2{
+    background:none;
+    color:#063046;
+    padding:0;
+    margin-bottom:30px;
+    font-size:35px;
+    text-align:center;
+}
+
+form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+input{
+    padding:15px;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    outline:none;
+}
+
+input:focus{
+    border:2px solid #19e05a;
+}
+
+button{
+    margin-top:10px;
+    border:none;
+    background:#0d4057;
+    color:#fff;
+    padding:15px;
+    font-size:18px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#0b3447;
+}
+
+/*================ RESPONSIVO ================*/
+
+@media(max-width:900px){
+
+.hero{
+    flex-direction:column;
+    text-align:center;
+    gap:50px;
+}
+
+.hero h1{
+    font-size:2.3rem;
+}
+
+.hero-image img{
+    width:180px;
+}
+
+.cards{
+    grid-template-columns:1fr;
+}
+
+.vantagens-grid{
+    grid-template-columns:1fr;
+}
+
+.formulario{
+    width:100%;
+}
+
+section h2{
+    font-size:17px;
+}
+
+}
