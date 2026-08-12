@@ -77,7 +77,7 @@ def recovery():
     return render_template('login/recovery.html', error=error, message=message)
 
 def main():
-    app.run(port=int(os.environ.get('PORT', 80)), debug=True)
+    app.run(host="0.0.0.0", port = int(os.environ.get("PORT", 10000)))
 
 if __name__ == "__main__":
     main()
