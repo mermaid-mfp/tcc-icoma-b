@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bora Lucrar</title>
 
-    <link rel="stylesheet" href="../../static/css/index.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,14 +30,14 @@
 
             <p>
                 Já tenho uma conta?
-                <a href="#">Entrar</a>
+                <a href="{{ url_for('login') }}">Entrar</a>
             </p>
 
         </div>
 
         <div class="hero-image">
 
-            <img src="../../static/img/grafico_transparente.png" alt="Ilustração">
+            <img src="{{ url_for('static', filename='img/grafico_transparente.png') }}" alt="Ilustração">
         </div>
 
     </header>
@@ -137,22 +137,25 @@
 
             <h2>Crie sua conta!</h2>
 
-            <form>
+            <form method="POST" action="{{ url_for('register') }}">
 
                 <input
                     type="text"
+                    name="nome"
                     placeholder="Nome completo"
                     required
                 >
 
                 <input
                     type="email"
+                    name="email"
                     placeholder="E-mail"
                     required
                 >
 
                 <input
                     type="password"
+                    name="password"
                     placeholder="Senha"
                     required
                 >
