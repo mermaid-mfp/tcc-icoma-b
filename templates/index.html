@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bora Lucrar</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="/static/css/index.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,14 +30,14 @@
 
             <p>
                 Já tenho uma conta?
-                <a href="{{ url_for('login') }}">Entrar</a>
+                <a href="/templates/login/login.html">Entrar</a>
             </p>
 
         </div>
 
         <div class="hero-image">
 
-            <img src="{{ url_for('static', filename='img/grafico_transparente.png') }}" alt="Ilustração">
+            <img src="/static/img/grafico.png" alt="Ilustração">
         </div>
 
     </header>
