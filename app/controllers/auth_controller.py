@@ -11,10 +11,10 @@ def login():
 @auth_bp.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        nome = request.form.get('nome')
+        nome = request.form.get('nome') or request.form.get('name')
         email = request.form.get('email')
-        senha = request.form.get('senha')
-        confirma_senha = request.form.get('confirma_senha')
+        senha = request.form.get('senha') or request.form.get('password')
+        confirma_senha = request.form.get('confirma_senha') or request.form.get('confirmPassword')
         
         try:
             success, message = auth_service.register_user(nome, email, senha, confirma_senha)

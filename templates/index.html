@@ -30,7 +30,7 @@
 
             <p>
                 Já tenho uma conta?
-                <a href="/templates/login/login.html">Entrar</a>
+                <a href="{{ url_for('auth.login') }}">Entrar</a>
             </p>
 
         </div>
@@ -137,7 +137,7 @@
 
             <h2>Crie sua conta!</h2>
 
-            <form method="POST" action="{{ url_for('register') }}">
+            <form method="POST" action="{{ url_for('auth.register') }}">
 
                 <input
                     type="text"
