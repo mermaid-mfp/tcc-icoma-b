@@ -6,7 +6,7 @@ auth_service = AuthService()
 
 @auth_bp.route('/login')
 def login():
-    return render_template('login.html')
+    return render_template('login/login.html')
 
 @auth_bp.route('/register', methods=['GET','POST'])
 def register():
@@ -22,7 +22,7 @@ def register():
                 flash(message, 'success')
                 return redirect(url_for('auth.login'))
         except ValueError as ve:
-            flash(str(e), 'error')
+            flash(str(ve), 'error')
         except Exception as e:
             flash(str(e), 'error')
             
