@@ -1,7 +1,10 @@
 from flask import Flask, render_template
 import os
+from app.controllers.transaction_controller import transaction_bp
 
 app = Flask(__name__)
+
+app.register_blueprint(transaction_bp)
 
 @app.route("/")
 def index():
