@@ -5,3 +5,6 @@ autopep8
 # App
 flask
 firebase-admin
+gunicorn
+requests
+python-dotenv
