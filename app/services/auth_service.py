@@ -1,4 +1,4 @@
-from services.firebase_auth import sign_up
+from services.firebase_auth import sign_up, sign_in
 from app.firebase_setup import db
 import time
 
@@ -27,3 +27,15 @@ class AuthService:
             db.collection("users").document(user_id).set(user_data)
             
         return True, "Usuário cadastrado com sucesso!"
+
+    def login_user(self, email, senha):
+        if not email or not senha:
+            raise ValueError("Preencha todos os campos obrigatórios.")
+            
+        response = sign_in(email, senha)
+        
+        if 'error' in response:
+            raise ValueError(response['error'].get('message', 'E-mail ou senha incorretos.'))
+            
+        # Retorna o ID do usuário para salvar na sessão
+        return True, response.get('localId')

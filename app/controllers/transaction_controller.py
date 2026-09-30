@@ -6,17 +6,20 @@ transaction_service = TransactionService()
 
 @transaction_bp.route('/')
 def dashboard():
-    # Em uma aplicação real, você deve pegar o user_id da sessão:
-    # user_id = session.get('user_id')
-    user_id = 'test_user_id' # mock por enquanto
-    
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("Por favor, faça login para acessar o dashboard.", "error")
+        return redirect(url_for('auth.login'))
+        
     metrics = transaction_service.get_dashboard_metrics(user_id=user_id)
     return render_template('dashboards/dashboard.html', metrics=metrics)
 
 @transaction_bp.route('/add', methods=['POST'])
 def add_transaction():
     try:
-        user_id = 'test_user_id' # mock
+        user_id = session.get('user_id')
+        if not user_id:
+            return redirect(url_for('auth.login'))
         
         type_trans = request.form.get('type_trans') # 'cost' ou 'sale'
         category = request.form.get('category')

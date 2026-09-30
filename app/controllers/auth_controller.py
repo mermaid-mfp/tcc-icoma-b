@@ -1,11 +1,25 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from app.services.auth_service import AuthService
 
 auth_bp = Blueprint('auth', __name__)
 auth_service = AuthService()
 
-@auth_bp.route('/login')
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        senha = request.form.get('senha') or request.form.get('password')
+        
+        try:
+            success, user_id = auth_service.login_user(email, senha)
+            if success:
+                session['user_id'] = user_id
+                return redirect(url_for('transaction.dashboard'))
+        except ValueError as ve:
+            flash(str(ve), 'error')
+        except Exception as e:
+            flash(str(e), 'error')
+            
     return render_template('login/login.html')
 
 @auth_bp.route('/register', methods=['GET','POST'])
