@@ -1,11 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from app.services.auth_service import AuthService
+from app.services.firebase_auth import sign_in
 
 auth_bp = Blueprint('auth', __name__)
 auth_service = AuthService()
-
-from flask import Blueprint, render_template, request, redirect, session
-from services.firebase_auth import sign_in
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -19,31 +17,30 @@ def login():
         if isinstance(resultado, dict) and "idToken" in resultado:
             session["user"] = resultado["localId"]
             session["email"] = email
-            return redirect("/dashboard")
+            return redirect(url_for("dashboard"))
 
         return render_template("login/login.html", error="E-mail ou senha inválidos.")
 
     return render_template("login/login.html")
 
-@auth_bp.route('/register', methods=['GET','POST'])
+
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         nome = request.form.get('nome') or request.form.get('name')
         email = request.form.get('email')
         senha = request.form.get('senha') or request.form.get('password')
         confirma_senha = request.form.get('confirma_senha') or request.form.get('confirmPassword')
-        
+
         try:
             success, message = auth_service.register_user(nome, email, senha, confirma_senha)
             if success:
                 flash(message, 'success')
                 return redirect(url_for('auth.login'))
+            flash(message, 'error')
         except ValueError as ve:
             flash(str(ve), 'error')
         except Exception as e:
             flash(str(e), 'error')
-            
+
     return render_template('login/register.html', site='boralucrar.com.br')
-        
-    
-    
