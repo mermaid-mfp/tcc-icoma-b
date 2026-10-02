@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from app.services.auth_service import AuthService
-from app.services.firebase_auth import sign_in
+from services.firebase_auth import sign_in
 
 auth_bp = Blueprint('auth', __name__)
 auth_service = AuthService()
