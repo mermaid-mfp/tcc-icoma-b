@@ -1,42 +1,51 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
+from flask import Blueprint, request, redirect, url_for, session, flash
 from app.services.transaction_service import TransactionService
 
 transaction_bp = Blueprint('transaction', __name__, url_prefix='/livro_caixa')
 transaction_service = TransactionService()
 
+def parse_amount(text):
+    """Aceita '12,50', '1.234,56', 'R$ 12,50' ou '12.50'."""
+    text = (text or "").replace("R$", "").strip()
+    if "," in text:
+        text = text.replace(".", "").replace(",", ".")
+    return float(text)
+
 @transaction_bp.route('/')
 def dashboard():
-    user_id = session.get('user_id')
-    if not user_id:
-        flash("Por favor, faça login para acessar o dashboard.", "error")
-        return redirect(url_for('auth.login'))
-        
-    metrics = transaction_service.get_dashboard_metrics(user_id=user_id)
-    return render_template('dashboards/dashboard.html', metrics=metrics)
+    # O dashboard fica em /dashboard (main.py)
+    return redirect(url_for('dashboard'))
 
 @transaction_bp.route('/add', methods=['POST'])
 def add_transaction():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('auth.login'))
+
+    type_trans = request.form.get('type_trans')  # 'sale' ou 'cost'
     try:
-        user_id = session.get('user_id')
-        if not user_id:
-            return redirect(url_for('auth.login'))
-        
-        type_trans = request.form.get('type_trans') # 'cost' ou 'sale'
-        category = request.form.get('category')
-        amount = float(request.form.get('amount', 0))
-        description = request.form.get('description', '')
-        client_name = request.form.get('client_name', '')
-        
+        amount = parse_amount(request.form.get('amount'))
+    except ValueError:
+        flash("Informe um valor válido, por exemplo 12,50.", "error")
+        return redirect(url_for('dashboard'))
+
+    try:
         transaction_service.add_transaction(
             type_trans=type_trans,
-            category=category,
+            category='sale' if type_trans == 'sale' else 'expense',
             amount=amount,
-            description=description,
-            client_name=client_name,
-            user_id=user_id
+            description=request.form.get('description', '').strip(),
+            client_name=request.form.get('client_name', '').strip(),
+            user_id=user_id,
+            payment_method=request.form.get('payment_method', '')
         )
-        
-        return redirect(url_for('transaction.dashboard'))
+    except ValueError as ve:
+        flash(str(ve), "error")
+        return redirect(url_for('dashboard'))
     except Exception as e:
         print("Erro ao adicionar transação:", e)
-        return "Erro ao processar", 500
+        flash("Não foi possível salvar agora. Tente de novo em instantes.", "error")
+        return redirect(url_for('dashboard'))
+
+    flash("Venda registrada." if type_trans == 'sale' else "Despesa registrada.", "success")
+    return redirect(url_for('dashboard'))

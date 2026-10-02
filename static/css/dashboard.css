@@ -91,6 +91,9 @@
   .btn-venda {
     background: var(--green);
     color: #03251a;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
     font-weight: 600;
     font-size: .85rem;
     padding: 7px 20px;
@@ -98,6 +101,17 @@
     transition: filter .2s;
   }
   .btn-venda:hover { filter: brightness(1.1); }
+
+  /* ---------- Avisos ---------- */
+  .flash-list { display: grid; gap: 8px; }
+  .flash {
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: .85rem;
+  }
+  .flash-success { background: rgba(0, 230, 118, .12); border-color: var(--green); }
+  .flash-error { background: rgba(255, 59, 78, .12); border-color: var(--red); }
   
   /* ---------- Cards de resumo ---------- */
   .stats {
@@ -125,7 +139,9 @@
     margin-top: 4px;
   }
   .stat-card strong { font-size: 1.25rem; font-weight: 600; }
-  .stat-card .small { font-size: .7rem; }
+  .tone-good { color: var(--green); }
+  .tone-bad { color: var(--red); }
+  .tone-neutral { color: var(--muted); }
   
   /* ---------- Painéis ---------- */
   .panel {
@@ -156,26 +172,46 @@
   .y-label {
     position: absolute;
     left: 0;
+    transform: translateY(-100%);
     font-size: .65rem;
     color: var(--muted);
   }
+  .y-label-top { top: 11.5%; }
+  .y-label-mid { top: 52.7%; }
+  .chart-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: .8rem;
+    color: var(--muted);
+    pointer-events: none;
+  }
   .days {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
     font-size: .72rem;
     color: var(--muted);
     margin-top: 6px;
   }
-  
+
   /* Rosca de métodos de pagamento */
   .payment-panel { display: flex; flex-direction: column; }
+  .payment-body {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
   .donut {
-    --size: 130px;
+    --size: 120px;
     width: var(--size);
     height: var(--size);
-    margin: auto;
     border-radius: 50%;
-    background: conic-gradient(var(--green) 0 100%);
+    background: var(--line);
     display: grid;
     place-items: center;
   }
@@ -186,8 +222,20 @@
     background: var(--panel);
     display: grid;
     place-items: center;
-    font-size: .75rem;
+    align-content: center;
+    text-align: center;
+    font-size: .72rem;
+    line-height: 1.3;
   }
+  .donut b { color: var(--green); font-size: .85rem; }
+  .legend { list-style: none; display: grid; gap: 6px; font-size: .75rem; }
+  .legend li { display: flex; align-items: center; gap: 8px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: #78909c; }
+  .dot-pix { background: #00e676; }
+  .dot-dinheiro { background: #ffb74d; }
+  .dot-debito { background: #4fc3f7; }
+  .dot-credito { background: #b39ddb; }
+  .dot-unknown { background: #78909c; }
   
   /* ---------- Tabela ---------- */
   .transactions { min-height: 220px; }
@@ -195,7 +243,75 @@
   th { text-align: left; font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--line); }
   td { padding: 8px 10px; border-bottom: 1px solid var(--line); color: var(--muted); }
   th.right, td.right { text-align: right; }
-  
+  td.right { color: var(--text); }
+  td.cost { color: var(--red); }
+  td.empty { text-align: center; padding: 28px 10px; }
+
+  /* ---------- Nova transação ---------- */
+  .sale-dialog {
+    margin: auto;
+    width: min(92vw, 400px);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    color-scheme: dark;
+  }
+  .sale-dialog::backdrop { background: rgba(2, 16, 22, .7); }
+  .sale-form { display: grid; gap: 14px; padding: 20px; }
+  .sale-form h2 { font-size: 1.05rem; font-weight: 600; }
+  .type-switch { border: 0; display: flex; gap: 8px; }
+  .type-switch label {
+    flex: 1;
+    text-align: center;
+    padding: 7px 0;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: .85rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .type-switch input { position: absolute; opacity: 0; pointer-events: none; }
+  .type-switch label:has(input:checked) { background: var(--green); border-color: var(--green); color: #03251a; }
+  .type-switch label:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+  .field { display: grid; gap: 6px; font-size: .8rem; color: var(--muted); }
+  .field[hidden] { display: none; }
+  .field input,
+  .field select {
+    font: inherit;
+    font-size: .9rem;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .field input:focus-visible,
+  .field select:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
+  .sale-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--text);
+    font: inherit;
+    font-size: .85rem;
+    font-weight: 500;
+    padding: 7px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { background: var(--panel-2); }
+  .btn-ghost:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
   /* ---------- Responsivo ---------- */
   @media (max-width: 860px) {
     .layout { grid-template-columns: 1fr; padding: 8px 16px 20px; }

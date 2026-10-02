@@ -37,23 +37,33 @@
     <!-- CONTEÚDO -->
     <main class="content">
 
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-list" role="status">
+          {% for category, message in messages %}
+          <p class="flash flash-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
       <div class="welcome">
-        <h1>Bem - vindo, <span>Seu Nome!</span></h1>
-        <a href="#" class="btn-venda">+ Nova Venda</a>
+        <h1>Bem - vindo, <span>{{ nome }}!</span></h1>
+        <button type="button" class="btn-venda" id="open-sale">+ Nova Venda</button>
       </div>
 
       <section class="stats">
         <article class="stat-card">
-          <h2>Vendas Hoje <i class="bi bi-cart3 green"></i></h2>
-          <p><strong>R$ 00,00</strong> <i class="bi bi-graph-up-arrow green"></i></p>
+          <h2>Vendas Hoje <i class="bi bi-cart3 green" aria-hidden="true"></i></h2>
+          <p><strong>{{ sales_today }}</strong> <i class="bi {{ sales_trend.icon }} tone-{{ sales_trend.tone }}" role="img" aria-label="{{ sales_trend.text }}" title="{{ sales_trend.text }}"></i></p>
         </article>
         <article class="stat-card">
-          <h2>Despesas <i class="bi bi-wallet2 red"></i></h2>
-          <p><strong>R$ 00,00</strong> <i class="bi bi-triangle green small"></i></p>
+          <h2>Despesas <i class="bi bi-wallet2 red" aria-hidden="true"></i></h2>
+          <p><strong>{{ costs_today }}</strong> <i class="bi {{ costs_trend.icon }} tone-{{ costs_trend.tone }}" role="img" aria-label="{{ costs_trend.text }}" title="{{ costs_trend.text }}"></i></p>
         </article>
         <article class="stat-card">
-          <h2>Lucro do Dia <i class="bi bi-cash-coin green"></i></h2>
-          <p><strong>R$ 00,00</strong> <i class="bi bi-graph-down-arrow red"></i></p>
+          <h2>Lucro do Dia <i class="bi bi-cash-coin green" aria-hidden="true"></i></h2>
+          <p><strong>{{ profit_today }}</strong> <i class="bi {{ profit_trend.icon }} tone-{{ profit_trend.tone }}" role="img" aria-label="{{ profit_trend.text }}" title="{{ profit_trend.text }}"></i></p>
         </article>
       </section>
 
@@ -61,29 +71,43 @@
         <article class="panel chart-panel">
           <h2 class="panel-title">Tendência semanal de vendas (7 dias)</h2>
           <div class="line-chart">
-            <svg viewBox="0 0 330 130" preserveAspectRatio="none" role="img" aria-label="Gráfico de vendas dos últimos 7 dias">
+            <svg viewBox="0 0 330 130" preserveAspectRatio="none" role="img" aria-label="{{ chart.summary }}">
               <defs>
                 <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#00e676" stop-opacity=".55"/>
                   <stop offset="100%" stop-color="#00e676" stop-opacity="0"/>
                 </linearGradient>
               </defs>
-              <line x1="0" y1="20" x2="330" y2="20" class="grid"/>
-              <line x1="0" y1="62" x2="330" y2="62" class="grid"/>
-              <polygon points="0,130 10,105 55,88 80,40 100,95 140,78 170,45 190,10 215,75 240,100 280,70 310,100 330,130" fill="url(#fill)"/>
-              <polyline points="10,105 55,88 80,40 100,95 140,78 170,45 190,10 215,75 240,100 280,70 310,100" class="line"/>
+              <line x1="0" y1="{{ chart.top_y }}" x2="330" y2="{{ chart.top_y }}" class="grid"/>
+              <line x1="0" y1="{{ chart.mid_y }}" x2="330" y2="{{ chart.mid_y }}" class="grid"/>
+              <polygon points="{{ chart.area }}" fill="url(#fill)"/>
+              <polyline points="{{ chart.line }}" class="line"/>
             </svg>
-            <span class="y-label" style="top:4px">R$ 400,00</span>
-            <span class="y-label" style="top:46px">R$ 200,00</span>
+            <span class="y-label y-label-top">{{ chart.top_label }}</span>
+            <span class="y-label y-label-mid">{{ chart.mid_label }}</span>
+            {% if not chart.has_sales %}
+            <p class="chart-empty">Sem vendas nos últimos 7 dias</p>
+            {% endif %}
           </div>
           <div class="days">
-            <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sab</span>
+            {% for label in chart.labels %}<span>{{ label }}</span>{% endfor %}
           </div>
         </article>
 
         <article class="panel payment-panel">
-          <h2 class="panel-title">Metodos de pagamento</h2>
-          <div class="donut"><span>Pix 100%</span></div>
+          <h2 class="panel-title">Métodos de pagamento (7 dias)</h2>
+          <div class="payment-body">
+            <div class="donut" id="donut" data-ring="{{ payments.gradient }}">
+              <span>{{ payments.center_label }}{% if payments.center_pct %}<br><b>{{ payments.center_pct }}</b>{% endif %}</span>
+            </div>
+            {% if payments.segments %}
+            <ul class="legend">
+              {% for item in payments.segments %}
+              <li><i class="dot dot-{{ item.key }}"></i>{{ item.label }} {{ item.pct }}%</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
         </article>
       </section>
 
@@ -94,13 +118,80 @@
             <tr><th>Data/Hora</th><th>Descrição</th><th class="right">Valor</th></tr>
           </thead>
           <tbody>
-            <tr><td>xx/xx/xx - 00h</td><td>Venda xx 1</td><td class="right">R$ xx,xx</td></tr>
+            {% for row in recent %}
+            <tr>
+              <td>{{ row.when }}</td>
+              <td>{{ row.description }}</td>
+              <td class="right {{ 'cost' if row.is_cost else '' }}">{{ row.amount }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="empty">Nenhuma transação ainda. Use “+ Nova Venda” para registrar a primeira.</td></tr>
+            {% endfor %}
           </tbody>
         </table>
       </section>
 
     </main>
   </div>
+
+  <!-- NOVA TRANSAÇÃO -->
+  <dialog id="sale-dialog" class="sale-dialog" aria-labelledby="sale-title">
+    <form method="post" action="{{ url_for('transaction.add_transaction') }}" class="sale-form">
+      <h2 id="sale-title">Nova transação</h2>
+
+      <fieldset class="type-switch">
+        <legend class="sr-only">Tipo</legend>
+        <label><input type="radio" name="type_trans" value="sale" checked> Venda</label>
+        <label><input type="radio" name="type_trans" value="cost"> Despesa</label>
+      </fieldset>
+
+      <label class="field">Valor (R$)
+        <input type="text" name="amount" inputmode="decimal" placeholder="0,00" autocomplete="off" required>
+      </label>
+
+      <label class="field" id="payment-field">Forma de pagamento
+        <select name="payment_method">
+          <option value="pix">Pix</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="debito">Débito</option>
+          <option value="credito">Crédito</option>
+        </select>
+      </label>
+
+      <label class="field">Descrição (opcional)
+        <input type="text" name="description" maxlength="80" placeholder="Ex.: 2 espetinhos" autocomplete="off">
+      </label>
+
+      <div class="sale-actions">
+        <button type="button" class="btn-ghost" id="close-sale">Cancelar</button>
+        <button type="submit" class="btn-venda">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const dialog = document.getElementById("sale-dialog");
+    const paymentField = document.getElementById("payment-field");
+    const paymentSelect = paymentField.querySelector("select");
+
+    const donut = document.getElementById("donut");
+    if (donut.dataset.ring) donut.style.background = "conic-gradient(" + donut.dataset.ring + ")";
+
+    document.getElementById("open-sale").addEventListener("click", () => dialog.showModal());
+    document.getElementById("close-sale").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+
+    // Despesa não tem forma de pagamento
+    dialog.querySelectorAll('input[name="type_trans"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const isSale = radio.value === "sale" && radio.checked;
+        if (radio.checked) {
+          paymentField.hidden = !isSale;
+          paymentSelect.disabled = !isSale;
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
