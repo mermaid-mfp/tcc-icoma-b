@@ -3,6 +3,10 @@
 
 {% block title %}Perfil{% endblock %}
 
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
 {% block content %}
       <div class="welcome">
         <h1>Meu <span>Perfil</span></h1>

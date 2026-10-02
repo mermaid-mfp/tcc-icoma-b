@@ -1,0 +1,31 @@
+/* ===== Página Controle de Estoque ===== */
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+  font: inherit;
+}
+.action-card i { font-size: 1.9rem; flex: none; }
+.action-card span { display: grid; font-size: .8rem; color: var(--muted); }
+.action-card strong { font-size: 1.25rem; font-weight: 600; color: var(--text); }
+button.action-card { cursor: pointer; }
+button.action-card:hover { background: var(--panel-2); }
+.stock-panel { min-height: 200px; }
+.link-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.link-btn:hover { color: var(--green); text-decoration-color: var(--green); }
+.link-btn:focus-visible,
+.action-card:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }

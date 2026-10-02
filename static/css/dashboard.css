@@ -1,479 +1,92 @@
-:root {
-    --bg: #04222c;
-    --panel: #0a3441;
-    --panel-2: #0d3d4b;
-    --line: #1b5666;
-    --text: #ffffff;
-    --muted: #9fc2cc;
-    --green: #00e676;
-    --red: #ff3b4e;
-  }
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body {
-    font-family: "Poppins", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-  
-  a { color: inherit; text-decoration: none; }
-  
-  .green { color: var(--green); }
-  .red { color: var(--red); }
-  
-  /* ---------- Topo ---------- */
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 28px;
-  }
-  .logo img { height: 52px; display: block; }
-  .topbar-actions { display: flex; gap: 14px; }
-  .icon-btn {
-    background: none;
-    border: 0;
-    color: var(--text);
-    font-size: 1.6rem;
-    cursor: pointer;
-    line-height: 1;
-  }
-  .icon-btn:hover { color: var(--green); }
-  
-  /* ---------- Layout ---------- */
-  .layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 18px;
-    padding: 8px 28px 28px;
-    align-items: start;
-  }
-  
-  /* ---------- Menu lateral ---------- */
-  .sidebar {
-    background: var(--panel);
-    border-radius: 10px;
-    padding: 14px 10px;
-  }
-  .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    margin-bottom: 4px;
-    font-size: .9rem;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: background .2s;
-  }
-  .menu-item .chev { margin-left: auto; font-size: .7rem; }
-  .menu-item:hover { background: var(--panel-2); }
-  .menu-item.active { color: var(--green); }
-  .menu-item:focus-visible,
-  .btn-venda:focus-visible,
-  .icon-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-  
-  /* ---------- Conteúdo ---------- */
-  .content { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-  
-  .welcome {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .welcome h1 { font-size: 1.35rem; font-weight: 600; }
-  .welcome h1 span { color: var(--green); }
-  
-  .btn-venda {
-    background: var(--green);
-    color: #03251a;
-    border: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    font-size: .85rem;
-    padding: 7px 20px;
-    border-radius: 999px;
-    transition: filter .2s;
-  }
-  .btn-venda:hover { filter: brightness(1.1); }
+/* ===== Página Início (dashboard): gráfico, métodos de pagamento, últimas transações ===== */
+.charts {
+  display: grid;
+  grid-template-columns: 1.9fr 1fr;
+  gap: 16px;
+}
 
-  /* ---------- Avisos ---------- */
-  .flash-list { display: grid; gap: 8px; }
-  .flash {
-    padding: 10px 14px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    font-size: .85rem;
-  }
-  .flash-success { background: rgba(0, 230, 118, .12); border-color: var(--green); }
-  .flash-error { background: rgba(255, 59, 78, .12); border-color: var(--red); }
-  
-  /* ---------- Cards de resumo ---------- */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  .stat-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 10px 14px;
-  }
-  .stat-card h2 {
-    display: flex;
-    justify-content: space-between;
-    font-size: .8rem;
-    font-weight: 500;
-    color: var(--muted);
-  }
-  .stat-card p {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 4px;
-  }
-  .stat-card strong { font-size: 1.25rem; font-weight: 600; }
-  .tone-good { color: var(--green); }
-  .tone-bad { color: var(--red); }
-  .tone-neutral { color: var(--muted); }
-  
-  /* ---------- Painéis ---------- */
-  .panel {
-    background: var(--panel);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .panel-title { font-size: .95rem; font-weight: 600; margin-bottom: 10px; }
-  .panel-title.green { color: var(--green); }
-  
-  .charts {
-    display: grid;
-    grid-template-columns: 1.9fr 1fr;
-    gap: 16px;
-  }
-  
-  /* Gráfico de linha */
-  .line-chart { position: relative; height: 150px; }
-  .line-chart svg { width: 100%; height: 100%; display: block; }
-  .line-chart .grid { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
-  .line-chart .line {
-    fill: none;
-    stroke: var(--green);
-    stroke-width: 2.5;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-  }
-  .y-label {
-    position: absolute;
-    left: 0;
-    transform: translateY(-100%);
-    font-size: .65rem;
-    color: var(--muted);
-  }
-  .y-label-top { top: 11.5%; }
-  .y-label-mid { top: 52.7%; }
-  .chart-empty {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    font-size: .8rem;
-    color: var(--muted);
-    pointer-events: none;
-  }
-  .days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    font-size: .72rem;
-    color: var(--muted);
-    margin-top: 6px;
-  }
+/* Gráfico de linha */
+.line-chart { position: relative; height: 150px; }
+.line-chart svg { width: 100%; height: 100%; display: block; }
+.line-chart .grid { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.line-chart .line {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.y-label {
+  position: absolute;
+  left: 0;
+  transform: translateY(-100%);
+  font-size: .65rem;
+  color: var(--muted);
+}
+.y-label-top { top: 11.5%; }
+.y-label-mid { top: 52.7%; }
+.chart-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: .8rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
 
-  /* Rosca de métodos de pagamento */
-  .payment-panel { display: flex; flex-direction: column; }
-  .payment-body {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-  }
-  .donut {
-    --size: 120px;
-    width: var(--size);
-    height: var(--size);
-    border-radius: 50%;
-    background: var(--line);
-    display: grid;
-    place-items: center;
-  }
-  .donut span {
-    width: 74%;
-    height: 74%;
-    border-radius: 50%;
-    background: var(--panel);
-    display: grid;
-    place-items: center;
-    align-content: center;
-    text-align: center;
-    font-size: .72rem;
-    line-height: 1.3;
-  }
-  .donut b { color: var(--green); font-size: .85rem; }
-  .legend { list-style: none; display: grid; gap: 6px; font-size: .75rem; }
-  .legend li { display: flex; align-items: center; gap: 8px; }
-  .legend .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: #78909c; }
-  .dot-pix { background: #00e676; }
-  .dot-dinheiro { background: #ffb74d; }
-  .dot-debito { background: #4fc3f7; }
-  .dot-credito { background: #b39ddb; }
-  .dot-unknown { background: #78909c; }
-  
-  /* ---------- Tabela ---------- */
-  .transactions { min-height: 220px; }
-  table { width: 100%; border-collapse: collapse; font-size: .8rem; }
-  th { text-align: left; font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--line); }
-  td { padding: 8px 10px; border-bottom: 1px solid var(--line); color: var(--muted); }
-  th.right, td.right { text-align: right; }
-  td.right { color: var(--text); }
-  td.cost { color: var(--red); }
-  td.empty { text-align: center; padding: 28px 10px; }
+/* Rosca de métodos de pagamento */
+.payment-panel { display: flex; flex-direction: column; }
+.payment-body {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.donut {
+  --size: 120px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: var(--line);
+  display: grid;
+  place-items: center;
+}
+.donut span {
+  width: 74%;
+  height: 74%;
+  border-radius: 50%;
+  background: var(--panel);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+  font-size: .72rem;
+  line-height: 1.3;
+}
+.donut b { color: var(--green); font-size: .85rem; }
+.legend { list-style: none; display: grid; gap: 6px; font-size: .75rem; }
+.legend li { display: flex; align-items: center; gap: 8px; }
+.legend .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: #78909c; }
+.dot-pix { background: #00e676; }
+.dot-dinheiro { background: #ffb74d; }
+.dot-debito { background: #4fc3f7; }
+.dot-credito { background: #b39ddb; }
+.dot-unknown { background: #78909c; }
 
-  /* ---------- Nova transação ---------- */
-  .app-dialog {
-    margin: auto;
-    width: min(92vw, 400px);
-    padding: 0;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--panel);
-    color: var(--text);
-    color-scheme: dark;
-  }
-  .app-dialog::backdrop { background: rgba(2, 16, 22, .7); }
-  .app-form { display: grid; gap: 14px; padding: 20px; }
-  .app-form h2 { font-size: 1.05rem; font-weight: 600; }
-  .type-switch { border: 0; display: flex; gap: 8px; }
-  .type-switch label {
-    flex: 1;
-    text-align: center;
-    padding: 7px 0;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    font-size: .85rem;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  .type-switch input { position: absolute; opacity: 0; pointer-events: none; }
-  .type-switch label:has(input:checked) { background: var(--green); border-color: var(--green); color: #03251a; }
-  .type-switch label:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
-  .field { display: grid; gap: 6px; font-size: .8rem; color: var(--muted); }
-  .field[hidden] { display: none; }
-  .field input,
-  .field select {
-    font: inherit;
-    font-size: .9rem;
-    padding: 9px 12px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--bg);
-    color: var(--text);
-  }
-  .field input:focus-visible,
-  .field select:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
-  .app-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
-  .btn-ghost {
-    background: none;
-    border: 1px solid var(--line);
-    color: var(--text);
-    font: inherit;
-    font-size: .85rem;
-    font-weight: 500;
-    padding: 7px 18px;
-    border-radius: 999px;
-    cursor: pointer;
-  }
-  .btn-ghost:hover { background: var(--panel-2); }
-  .btn-ghost:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
+.transactions { min-height: 220px; }
 
-  /* ---------- Responsivo ---------- */
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; padding: 8px 16px 20px; }
-    .topbar { padding: 10px 16px; }
-    .stats { grid-template-columns: 1fr; }
-    .charts { grid-template-columns: 1fr; }
-    .payment-panel { padding-bottom: 24px; }
-  }
-
-  /* ===================== Páginas: Transações, Estoque e Perfil ===================== */
-
-  .welcome h1.green { color: var(--green); }
-
-  /* menu: botão Sair e links */
-  button.menu-item {
-    width: 100%;
-    background: none;
-    border: 0;
-    color: inherit;
-    font-family: inherit;
-    text-align: left;
-    cursor: pointer;
-  }
-  .logout-form { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
-  .icon-btn { display: inline-flex; }
-  .icon-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 6px; }
-
-  /* tabelas */
-  .table-scroll { overflow-x: auto; }
-  th.center, td.center { text-align: center; }
-  td.actions { white-space: nowrap; }
-  .hint { font-size: .75rem; color: var(--muted); margin-top: 10px; }
-  small.hint { margin-top: 0; }
-
-  .icon-action {
-    background: none;
-    border: 0;
-    color: var(--text);
-    font-size: 1rem;
-    line-height: 1;
-    padding: 6px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .icon-action:hover { color: var(--green); background: var(--panel-2); }
-  .icon-action.danger:hover { color: var(--red); }
-  .icon-action:focus-visible,
-  .link-btn:focus-visible,
-  .action-card:focus-visible,
-  .search button:focus-visible,
-  .btn-danger:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-
-  .badge {
-    display: inline-block;
-    padding: 2px 12px;
-    border-radius: 999px;
-    font-size: .72rem;
-    font-weight: 600;
-  }
-  .badge-concluido { background: var(--green); color: #03251a; }
-  .badge-pendente { background: #ffe600; color: #2b2500; }
-
-  /* Transações: filtros e totais */
-  .filters {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    align-items: end;
-  }
-  .period { border: 0; display: flex; flex-wrap: wrap; gap: 12px; align-items: end; min-width: 0; }
-  .period legend { font-size: .95rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
-  .period .field { flex: 1 1 140px; }
-  .search { position: relative; }
-  .search input { padding-right: 44px; }
-  .search button {
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: 0;
-    color: var(--muted);
-    font-size: 1rem;
-    padding: 6px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .search button:hover { color: var(--green); }
-  .transactions-panel { min-height: 160px; }
-  .summary { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 16px; }
-
-  /* Estoque */
-  .action-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-    text-align: left;
-    color: var(--text);
-    font: inherit;
-  }
-  .action-card i { font-size: 1.9rem; flex: none; }
-  .action-card span { display: grid; font-size: .8rem; color: var(--muted); }
-  .action-card strong { font-size: 1.25rem; font-weight: 600; color: var(--text); }
-  button.action-card { cursor: pointer; }
-  button.action-card:hover { background: var(--panel-2); }
-  .stock-panel { min-height: 200px; }
-  .link-btn {
-    background: none;
-    border: 0;
-    padding: 0;
-    color: var(--text);
-    font: inherit;
-    text-align: left;
-    text-decoration: underline;
-    text-decoration-color: var(--line);
-    text-underline-offset: 4px;
-    cursor: pointer;
-  }
-  .link-btn:hover { color: var(--green); text-decoration-color: var(--green); }
-
-  /* Diálogos de confirmação e detalhes */
-  .btn-danger {
-    background: var(--red);
-    color: #fff;
-    border: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    font-size: .85rem;
-    padding: 7px 20px;
-    border-radius: 999px;
-    transition: filter .2s;
-  }
-  .btn-danger:hover { filter: brightness(1.1); }
-  .dialog-text { font-size: .85rem; color: var(--muted); line-height: 1.5; }
-  .details { display: grid; gap: 10px; font-size: .85rem; }
-  .details div { display: grid; grid-template-columns: 140px 1fr; gap: 8px; }
-  .details dt { color: var(--muted); }
-  .details dd { margin: 0; overflow-wrap: anywhere; }
-
-  /* Perfil */
-  .profile-card { display: flex; align-items: center; gap: 16px; }
-  .avatar {
-    width: 56px;
-    height: 56px;
-    flex: none;
-    border-radius: 50%;
-    background: var(--green);
-    color: #03251a;
-    display: grid;
-    place-items: center;
-    font-size: 1.4rem;
-    font-weight: 600;
-  }
-  .profile-card .meta { display: grid; gap: 2px; font-size: .85rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
-  .profile-card .meta strong { color: var(--text); font-size: 1.05rem; }
-  .profile-form { display: grid; gap: 14px; max-width: 420px; }
-  .field input[readonly] { opacity: .7; }
-
-  @media (max-width: 860px) {
-    .filters { grid-template-columns: 1fr; }
-    .summary { grid-template-columns: 1fr; }
-    .details div { grid-template-columns: 1fr; gap: 2px; }
-  }
+@media (max-width: 860px) {
+  .charts { grid-template-columns: 1fr; }
+  .payment-panel { padding-bottom: 24px; }
+}

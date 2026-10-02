@@ -3,6 +3,10 @@
 
 {% block title %}Controle de Estoque{% endblock %}
 
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+{% endblock %}
+
 {% block content %}
       <div class="welcome">
         <h1>Controle de <span>Estoque</span></h1>

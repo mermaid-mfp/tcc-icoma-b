@@ -3,6 +3,10 @@
 
 {% block title %}Início{% endblock %}
 
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
 {% block content %}
       <div class="welcome">
         <h1>Bem - vindo, <span>{{ nome }}!</span></h1>
