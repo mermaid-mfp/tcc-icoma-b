@@ -1,0 +1,130 @@
+{% extends "dashboards/base.html" %}
+{% set active_page = 'transactions' %}
+
+{% block title %}Transações{% endblock %}
+
+{% block content %}
+      <div class="welcome">
+        <h1 class="green">Transações</h1>
+        <button type="button" class="btn-venda" data-open-dialog="transaction-dialog">+ Nova Entrada</button>
+      </div>
+
+      <form method="get" action="{{ url_for('transaction.transactions_page') }}" class="panel filters">
+        <fieldset class="period">
+          <legend>Período</legend>
+          <label class="field"><span>De</span>
+            <input type="date" name="de" value="{{ date_from }}" data-autosubmit>
+          </label>
+          <label class="field"><span>Até</span>
+            <input type="date" name="ate" value="{{ date_to }}" data-autosubmit>
+          </label>
+        </fieldset>
+
+        <label class="field search">
+          <span class="sr-only">Buscar transações</span>
+          <input type="search" name="q" value="{{ query }}" placeholder="Buscar transações" autocomplete="off">
+          <button type="submit" aria-label="Buscar"><i class="bi bi-search"></i></button>
+        </label>
+      </form>
+
+      <section class="panel transactions-panel">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Descrição</th>
+                <th class="right">Valor</th>
+                <th>Status</th>
+                <th class="right">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in rows %}
+              <tr>
+                <td>{{ row.when }}</td>
+                <td>{{ row.description }}</td>
+                <td class="right {{ 'cost' if row.is_cost else '' }}">{{ row.amount }}</td>
+                <td><span class="badge badge-{{ row.status }}">{{ row.status_label }}</span></td>
+                <td class="right actions">
+                  <button type="button" class="icon-action" aria-label="Editar transação" title="Editar"
+                          data-open-dialog="transaction-dialog"
+                          data-action="{{ url_for('transaction.edit_transaction', transaction_id=row.id) }}"
+                          data-title="Editar transação"
+                          data-field-type_trans="{{ row.type }}"
+                          data-field-amount="{{ row.amount_input }}"
+                          data-field-payment_method="{{ row.payment }}"
+                          data-field-status="{{ row.status }}"
+                          data-field-description="{{ row.raw_description }}"><i class="bi bi-pencil"></i></button>
+                  <button type="button" class="icon-action" aria-label="Ver detalhes" title="Ver detalhes"
+                          data-open-dialog="details-dialog"
+                          data-view-when="{{ row.when_full }}"
+                          data-view-type="{{ 'Despesa' if row.is_cost else 'Venda' }}"
+                          data-view-amount="{{ row.amount }}"
+                          data-view-payment="{{ row.payment_label }}"
+                          data-view-status="{{ row.status_label }}"
+                          data-view-description="{{ row.description }}"><i class="bi bi-eye"></i></button>
+                  <button type="button" class="icon-action danger" aria-label="Excluir transação" title="Excluir"
+                          data-open-dialog="delete-dialog"
+                          data-action="{{ url_for('transaction.delete_transaction', transaction_id=row.id) }}"
+                          data-view-description="{{ row.description }}"><i class="bi bi-trash3"></i></button>
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5" class="empty">Nenhuma transação neste período. Use “+ Nova Entrada” para registrar uma ou mude as datas.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if has_more %}
+        <p class="hint">Mostrando as {{ list_limit }} mais recentes de {{ total_rows }}. Use o período ou a busca para ver as outras.</p>
+        {% endif %}
+      </section>
+
+      <section class="summary">
+        <article class="stat-card">
+          <h2>Total Entrada <i class="bi bi-wallet2 green" aria-hidden="true"></i></h2>
+          <p><strong>{{ total_in }}</strong></p>
+        </article>
+        <article class="stat-card">
+          <h2>Saldo do período <i class="bi bi-cash-coin green" aria-hidden="true"></i></h2>
+          <p><strong>{{ balance }}</strong> <i class="bi {{ balance_trend.icon }} tone-{{ balance_trend.tone }}" role="img" aria-label="{{ balance_trend.text }}" title="{{ balance_trend.text }}"></i></p>
+        </article>
+      </section>
+      <p class="hint">Transações pendentes aparecem na lista, mas só entram nos totais depois de concluídas.</p>
+{% endblock %}
+
+{% block dialogs %}
+  {% include "dashboards/_transaction_dialog.html" %}
+
+  <!-- DETALHES -->
+  <dialog id="details-dialog" class="app-dialog" aria-labelledby="details-title">
+    <div class="app-form">
+      <h2 id="details-title">Detalhes da transação</h2>
+      <dl class="details">
+        <div><dt>Data e hora</dt><dd data-view="when"></dd></div>
+        <div><dt>Tipo</dt><dd data-view="type"></dd></div>
+        <div><dt>Valor</dt><dd data-view="amount"></dd></div>
+        <div><dt>Forma de pagamento</dt><dd data-view="payment"></dd></div>
+        <div><dt>Status</dt><dd data-view="status"></dd></div>
+        <div><dt>Descrição</dt><dd data-view="description"></dd></div>
+      </dl>
+      <div class="app-actions">
+        <button type="button" class="btn-ghost" data-close-dialog>Fechar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- EXCLUIR -->
+  <dialog id="delete-dialog" class="app-dialog" aria-labelledby="delete-title">
+    <form method="post" class="app-form">
+      <input type="hidden" name="back" value="{{ request.full_path }}">
+      <h2 id="delete-title">Excluir transação?</h2>
+      <p class="dialog-text">“<span data-view="description"></span>” será removida e os totais serão recalculados. Essa ação não pode ser desfeita.</p>
+      <div class="app-actions">
+        <button type="button" class="btn-ghost" data-close-dialog>Cancelar</button>
+        <button type="submit" class="btn-danger">Excluir</button>
+      </div>
+    </form>
+  </dialog>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "dashboards/base.html" %}
+{% set active_page = 'stock' %}
+
+{% block title %}Controle de Estoque{% endblock %}
+
+{% block content %}
+      <div class="welcome">
+        <h1>Controle de <span>Estoque</span></h1>
+      </div>
+
+      <section class="stats">
+        <button type="button" class="stat-card action-card" data-open-dialog="remove-dialog">
+          <i class="bi bi-trash3 red" aria-hidden="true"></i>
+          <span>Remover Produto</span>
+        </button>
+        <button type="button" class="stat-card action-card" data-open-dialog="product-dialog">
+          <i class="bi bi-plus-circle green" aria-hidden="true"></i>
+          <span>Novo produto</span>
+        </button>
+        <article class="stat-card action-card">
+          <i class="bi bi-layers green" aria-hidden="true"></i>
+          <span>Itens em Estoque <strong>{{ item_count }}</strong></span>
+        </article>
+      </section>
+
+      <section class="panel stock-panel">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th class="center">Quantidade</th>
+                <th class="right">Valor Unitário</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in products %}
+              <tr>
+                <td>
+                  <button type="button" class="link-btn" title="Editar produto"
+                          data-open-dialog="product-dialog"
+                          data-action="{{ url_for('stock.edit_product', product_id=p.id) }}"
+                          data-title="Editar produto"
+                          data-field-nome="{{ p.nome }}"
+                          data-field-quantidade="{{ p.quantity_input }}"
+                          data-field-valor_unitario="{{ p.price_input }}">{{ p.nome }}</button>
+                </td>
+                <td class="center">{{ p.quantity }}</td>
+                <td class="right">{{ p.price }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="3" class="empty">Nenhum produto cadastrado. Use “Novo produto” para começar.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if products %}
+        <p class="hint">Clique no nome de um produto para editar a quantidade ou o valor.</p>
+        {% endif %}
+      </section>
+{% endblock %}
+
+{% block dialogs %}
+  <!-- NOVO / EDITAR PRODUTO -->
+  <dialog id="product-dialog" class="app-dialog" aria-labelledby="product-title">
+    <form method="post" action="{{ url_for('stock.add_product') }}" data-default-action="{{ url_for('stock.add_product') }}" class="app-form">
+      <h2 id="product-title" data-dialog-title data-default-title="Novo produto">Novo produto</h2>
+
+      <label class="field">Produto
+        <input type="text" name="nome" maxlength="60" placeholder="Ex.: Carvão 5 kg" autocomplete="off" required>
+      </label>
+
+      <label class="field">Quantidade
+        <input type="text" name="quantidade" inputmode="decimal" placeholder="0" autocomplete="off" required>
+      </label>
+
+      <label class="field">Valor unitário (R$)
+        <input type="text" name="valor_unitario" inputmode="decimal" placeholder="0,00" autocomplete="off" required>
+      </label>
+
+      <div class="app-actions">
+        <button type="button" class="btn-ghost" data-close-dialog>Cancelar</button>
+        <button type="submit" class="btn-venda">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- REMOVER PRODUTO -->
+  <dialog id="remove-dialog" class="app-dialog" aria-labelledby="remove-title">
+    <form method="post" action="{{ url_for('stock.remove_product') }}" class="app-form">
+      <h2 id="remove-title">Remover produto</h2>
+
+      {% if products %}
+      <label class="field">Produto
+        <select name="product_id" required>
+          {% for p in products %}
+          <option value="{{ p.id }}">{{ p.nome }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <p class="dialog-text">O produto escolhido sai do estoque. Essa ação não pode ser desfeita.</p>
+      {% else %}
+      <p class="dialog-text">Não há produtos cadastrados para remover.</p>
+      {% endif %}
+
+      <div class="app-actions">
+        <button type="button" class="btn-ghost" data-close-dialog>Cancelar</button>
+        {% if products %}<button type="submit" class="btn-danger">Remover</button>{% endif %}
+      </div>
+    </form>
+  </dialog>
+{% endblock %}

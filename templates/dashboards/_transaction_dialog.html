@@ -1,0 +1,42 @@
+<!-- NOVA / EDITAR TRANSAÇÃO (usado no Início e em Transações) -->
+<dialog id="transaction-dialog" class="app-dialog" aria-labelledby="transaction-title">
+  <form method="post" action="{{ url_for('transaction.add_transaction') }}" data-default-action="{{ url_for('transaction.add_transaction') }}" class="app-form">
+    <input type="hidden" name="back" value="{{ request.full_path }}">
+    <h2 id="transaction-title" data-dialog-title data-default-title="Nova transação">Nova transação</h2>
+
+    <fieldset class="type-switch">
+      <legend class="sr-only">Tipo</legend>
+      <label><input type="radio" name="type_trans" value="sale" checked> Venda</label>
+      <label><input type="radio" name="type_trans" value="cost"> Despesa</label>
+    </fieldset>
+
+    <label class="field">Valor (R$)
+      <input type="text" name="amount" inputmode="decimal" placeholder="0,00" autocomplete="off" required>
+    </label>
+
+    <label class="field" data-payment-field>Forma de pagamento
+      <select name="payment_method">
+        <option value="pix">Pix</option>
+        <option value="dinheiro">Dinheiro</option>
+        <option value="debito">Débito</option>
+        <option value="credito">Crédito</option>
+      </select>
+    </label>
+
+    <label class="field">Status
+      <select name="status">
+        <option value="concluido">Concluído</option>
+        <option value="pendente">Pendente (ainda não recebido ou pago)</option>
+      </select>
+    </label>
+
+    <label class="field">Descrição (opcional)
+      <input type="text" name="description" maxlength="80" placeholder="Ex.: 2 espetinhos" autocomplete="off">
+    </label>
+
+    <div class="app-actions">
+      <button type="button" class="btn-ghost" data-close-dialog>Cancelar</button>
+      <button type="submit" class="btn-venda">Salvar</button>
+    </div>
+  </form>
+</dialog>

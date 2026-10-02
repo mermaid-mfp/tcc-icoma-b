@@ -2,12 +2,10 @@ import datetime
 import math
 from collections import defaultdict
 
+from app.formatting import BRT, MAX_VALUE, format_brl, format_money_input, to_local as _local
 from app.repositories.transaction_repository import TransactionRepository
 from app.repositories.user_repository import UserRepository
 from app.models.transaction import Transaction
-
-# Horário de Brasília (o Brasil não usa mais horário de verão)
-BRT = datetime.timezone(datetime.timedelta(hours=-3))
 
 PAYMENT_LABELS = {
     "pix": "Pix",
@@ -24,6 +22,11 @@ PAYMENT_COLORS = {
 UNKNOWN_PAYMENT_LABEL = "Não informado"
 UNKNOWN_PAYMENT_COLOR = "#78909c"
 
+STATUS_LABELS = {
+    "concluido": "Concluído",
+    "pendente": "Pendente",
+}
+
 WEEKDAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]  # date.weekday(): segunda = 0
 
 # Área do gráfico de linha (viewBox 330 x 130)
@@ -32,20 +35,16 @@ CHART_HEIGHT = 130
 CHART_TOP = 15      # altura da linha do valor máximo
 CHART_BASE = 122    # altura do valor zero
 
-
-def format_brl(value):
-    """1234.5 -> 'R$ 1.234,50'"""
-    text = f"{abs(value):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"R$ {text}"
+LIST_LIMIT = 100    # linhas mostradas na página Transações
+DESCRIPTION_LIMIT = 80
 
 
-def _local(timestamp):
-    """Converte o horário salvo no Firestore para o horário de Brasília."""
-    if not isinstance(timestamp, datetime.datetime):
+def parse_date(text):
+    """'2026-10-02' -> date, ou None se vier vazio/inválido."""
+    try:
+        return datetime.date.fromisoformat((text or "").strip())
+    except ValueError:
         return None
-    if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=datetime.timezone.utc)
-    return timestamp.astimezone(BRT)
 
 
 def _nice_max(value):
@@ -70,31 +69,128 @@ def _trend(today_value, yesterday_value, higher_is_good):
     }
 
 
+def _signed_brl(value):
+    return ("− " if value < 0 else "") + format_brl(value)
+
+
+def _validated(type_trans, amount, payment_method, status):
+    """Confere os dados de uma transação e devolve a forma de pagamento a salvar."""
+    if type_trans not in ("sale", "cost"):
+        raise ValueError("Escolha se é uma venda ou uma despesa.")
+    if amount <= 0:
+        raise ValueError("Informe um valor maior que zero.")
+    if amount > MAX_VALUE:
+        raise ValueError("O valor é alto demais.")
+    if status not in STATUS_LABELS:
+        raise ValueError("Escolha o status: concluído ou pendente.")
+    if type_trans == "sale" and payment_method not in PAYMENT_LABELS:
+        raise ValueError("Escolha a forma de pagamento.")
+    return payment_method if type_trans == "sale" else ""
+
+
 class TransactionService:
     def __init__(self):
         self.repo = TransactionRepository()
         self.user_repo = UserRepository()
 
-    def add_transaction(self, type_trans, category, amount, description, client_name, user_id, payment_method=""):
-        if type_trans not in ("sale", "cost"):
-            raise ValueError("Escolha se é uma venda ou uma despesa.")
-        if amount <= 0:
-            raise ValueError("Informe um valor maior que zero.")
-        if type_trans == "sale" and payment_method not in PAYMENT_LABELS:
-            raise ValueError("Escolha a forma de pagamento.")
-        if type_trans == "cost":
-            payment_method = ""
+    # ---------- criar, editar e excluir ----------
+
+    def add_transaction(self, type_trans, category, amount, description, client_name, user_id,
+                        payment_method="", status="concluido"):
+        payment_method = _validated(type_trans, amount, payment_method, status)
 
         transaction = Transaction(
             type_trans=type_trans,
             category=category,
             amount=amount,
-            description=description,
+            description=(description or "").strip()[:DESCRIPTION_LIMIT],
             client_name=client_name,
             user_id=user_id,
-            payment_method=payment_method
+            payment_method=payment_method,
+            status=status
         )
         return self.repo.add_transaction(transaction)
+
+    def update_transaction(self, user_id, transaction_id, type_trans, amount, description,
+                           payment_method, status):
+        self._own(user_id, transaction_id)
+        payment_method = _validated(type_trans, amount, payment_method, status)
+
+        self.repo.update_transaction(transaction_id, {
+            "type_trans": type_trans,
+            "category": "sale" if type_trans == "sale" else "expense",
+            "amount": amount,
+            "description": (description or "").strip()[:DESCRIPTION_LIMIT],
+            "payment_method": payment_method,
+            "status": status,
+        })
+
+    def delete_transaction(self, user_id, transaction_id):
+        self._own(user_id, transaction_id)
+        self.repo.delete_transaction(transaction_id)
+
+    def _own(self, user_id, transaction_id):
+        """Só o dono da transação pode mexer nela."""
+        transaction = self.repo.get_transaction(transaction_id)
+        if transaction is None or transaction.user_id != user_id:
+            raise ValueError("Transação não encontrada.")
+        return transaction
+
+    # ---------- página Transações ----------
+
+    def list_transactions(self, user_id, date_from=None, date_to=None, query=""):
+        transactions = self.repo.get_all_transactions(user_id=user_id)
+        filtered_by_date = date_from is not None or date_to is not None
+
+        in_period = []
+        for t in transactions:
+            local = _local(t.timestamp)
+            if local is None:
+                if filtered_by_date:
+                    continue
+            else:
+                day = local.date()
+                if date_from and day < date_from:
+                    continue
+                if date_to and day > date_to:
+                    continue
+            in_period.append(t)
+
+        # Os totais valem para o período inteiro; transações pendentes ainda não contam.
+        total_in = 0.0
+        balance = 0.0
+        for t in in_period:
+            if t.status == "pendente":
+                continue
+            if t.type_trans == "sale":
+                total_in += t.amount
+                balance += t.amount
+            elif t.type_trans == "cost":
+                balance -= t.amount
+
+        needle = (query or "").strip().casefold()
+        rows = [self._row(t) for t in in_period]
+        if needle:
+            rows = [row for row in rows if needle in row["search"]]
+
+        if round(balance, 2) > 0:
+            balance_trend = {"icon": "bi-graph-up-arrow", "tone": "good", "text": "Saldo positivo"}
+        elif round(balance, 2) < 0:
+            balance_trend = {"icon": "bi-graph-down-arrow", "tone": "bad", "text": "Saldo negativo"}
+        else:
+            balance_trend = {"icon": "bi-dash-lg", "tone": "neutral", "text": "Saldo zerado"}
+
+        return {
+            "rows": rows[:LIST_LIMIT],
+            "total_rows": len(rows),
+            "has_more": len(rows) > LIST_LIMIT,
+            "list_limit": LIST_LIMIT,
+            "total_in": format_brl(total_in),
+            "balance": _signed_brl(balance),
+            "balance_trend": balance_trend,
+        }
+
+    # ---------- dashboard ----------
 
     def get_dashboard_data(self, user_id, fallback_name=""):
         transactions = self.repo.get_all_transactions(user_id=user_id)
@@ -107,6 +203,8 @@ class TransactionService:
         sales_by_payment = defaultdict(float)
 
         for t in transactions:
+            if t.status == "pendente":
+                continue  # ainda não foi recebido ou pago
             local = _local(t.timestamp)
             if local is None:
                 continue
@@ -128,7 +226,7 @@ class TransactionService:
             "nome": self._first_name(user_id, fallback_name),
             "sales_today": format_brl(sales_today),
             "costs_today": format_brl(costs_today),
-            "profit_today": ("− " if profit_today < 0 else "") + format_brl(profit_today),
+            "profit_today": _signed_brl(profit_today),
             "sales_trend": _trend(sales_today, sales_by_day[yesterday], higher_is_good=True),
             "costs_trend": _trend(costs_today, costs_by_day[yesterday], higher_is_good=False),
             "profit_trend": _trend(profit_today, profit_yesterday, higher_is_good=True),
@@ -175,8 +273,6 @@ class TransactionService:
             "mid_y": mid_y,
             "top_label": format_brl(axis_max),
             "mid_label": format_brl(axis_max / 2),
-            "top_pct": round(CHART_TOP / CHART_HEIGHT * 100, 1),
-            "mid_pct": round(mid_y / CHART_HEIGHT * 100, 1),
             "has_sales": any(v > 0 for v in values),
         }
 
@@ -211,13 +307,34 @@ class TransactionService:
             "center_pct": f"{items[0]['pct']}%",
         }
 
+    # ---------- linhas de tabela ----------
+
     @staticmethod
-    def _recent_row(t):
+    def _row(t):
         local = _local(t.timestamp)
         is_cost = t.type_trans == "cost"
+        status = t.status if t.status in STATUS_LABELS else "concluido"
+        payment_label = "" if is_cost else PAYMENT_LABELS.get(t.payment_method, "")
+        description = t.description or ("Despesa" if is_cost else "Venda")
         return {
-            "when": local.strftime("%d/%m/%y - %Hh") if local else "—",
-            "description": t.description or ("Despesa" if is_cost else "Venda"),
-            "amount": ("− " if is_cost else "") + format_brl(t.amount),
+            "id": t.id,
+            "type": t.type_trans,
             "is_cost": is_cost,
+            "when": local.strftime("%d/%m/%y - %Hh") if local else "—",
+            "when_full": local.strftime("%d/%m/%Y às %H:%M") if local else "—",
+            "description": description,
+            "raw_description": t.description or "",
+            "amount": ("− " if is_cost else "") + format_brl(t.amount),
+            "amount_input": format_money_input(t.amount),
+            "payment": t.payment_method or "",
+            "payment_label": payment_label or "—",
+            "status": status,
+            "status_label": STATUS_LABELS[status],
+            "search": f"{description} {payment_label} {STATUS_LABELS[status]}".casefold(),
         }
+
+    def _recent_row(self, t):
+        row = self._row(t)
+        if row["status"] == "pendente":
+            row["description"] += " (pendente)"
+        return row

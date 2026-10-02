@@ -1,0 +1,41 @@
+{% extends "dashboards/base.html" %}
+{% set active_page = 'profile' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+      <div class="welcome">
+        <h1>Meu <span>Perfil</span></h1>
+      </div>
+
+      <section class="panel profile-card">
+        <div class="avatar" aria-hidden="true">{{ initial }}</div>
+        <div class="meta">
+          <strong>{{ nome or 'Sem nome cadastrado' }}</strong>
+          <span>{{ email }}</span>
+          {% if member_since %}<span>Conta criada em {{ member_since }}</span>{% endif %}
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Dados da conta</h2>
+        <form method="post" action="{{ url_for('profile.update_name') }}" class="profile-form">
+          <label class="field">Nome
+            <input type="text" name="nome" value="{{ nome }}" maxlength="80" autocomplete="name" required>
+          </label>
+          <label class="field">E-mail
+            <input type="email" value="{{ email }}" readonly aria-describedby="email-hint">
+            <small id="email-hint" class="hint">O e-mail é o seu login e não pode ser mudado por aqui.</small>
+          </label>
+          <div><button type="submit" class="btn-venda">Salvar nome</button></div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Senha</h2>
+        <p class="dialog-text">Enviamos um link para o seu e-mail, e por ele você cria uma nova senha.</p>
+        <form method="post" action="{{ url_for('profile.reset_password') }}" class="profile-form">
+          <div><button type="submit" class="btn-ghost">Enviar e-mail para redefinir a senha</button></div>
+        </form>
+      </section>
+{% endblock %}

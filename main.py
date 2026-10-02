@@ -1,12 +1,18 @@
-from flask import Flask, render_template, redirect, session
+from flask import Flask, render_template, session, g
 import os
+from app.auth_helpers import login_required
 from app.controllers.transaction_controller import transaction_bp, transaction_service
+from app.controllers.stock_controller import stock_bp
+from app.controllers.profile_controller import profile_bp
 from app.controllers.auth_controller import auth_bp
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'super_secret_key')
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # o login não vale para pedidos vindos de outros sites
 
 app.register_blueprint(transaction_bp)
+app.register_blueprint(stock_bp)
+app.register_blueprint(profile_bp)
 app.register_blueprint(auth_bp)
 
 @app.route("/")
@@ -19,13 +25,10 @@ def recovery():
     return render_template('login/recovery.html')
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
-    user_id = session.get("user")
-    if not user_id:
-        return redirect("/login")
-
     fallback_name = session.get("email", "").split("@")[0]
-    data = transaction_service.get_dashboard_data(user_id, fallback_name=fallback_name)
+    data = transaction_service.get_dashboard_data(g.user_id, fallback_name=fallback_name)
     return render_template("dashboards/dashboard.html", **data)
 
 def main():

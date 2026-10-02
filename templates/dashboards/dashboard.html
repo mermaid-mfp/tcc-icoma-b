@@ -1,55 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Inicío| Bora Lucrar</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/dashboard.css">
-</head>
-<body>
+{% extends "dashboards/base.html" %}
+{% set active_page = 'dashboard' %}
 
-  <header class="topbar">
-    <a href="/static/img/logo.png" class="logo">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Bora Lucrar">
-    </a>
-    <div class="topbar-actions">
-      <button class="icon-btn" aria-label="Conta"><i class="bi bi-person-circle"></i></button>
-      <button class="icon-btn" aria-label="Configurações"><i class="bi bi-gear"></i></button>
-    </div>
-  </header>
+{% block title %}Início{% endblock %}
 
-  <div class="layout">
-
-    <!-- MENU LATERAL -->
-    <aside class="sidebar">
-      <nav>
-        <a href="#" class="menu-item active"><i class="bi bi-grid-fill"></i> Início <i class="bi bi-chevron-down chev"></i></a>
-        <a href="#" class="menu-item"><i class="bi bi-arrow-left-right"></i> Transações <i class="bi bi-chevron-down chev"></i></a>
-        <a href="#" class="menu-item"><i class="bi bi-boxes"></i> Controle de Estoque <i class="bi bi-chevron-down chev"></i></a>
-        <a href="#" class="menu-item"><i class="bi bi-person"></i> Perfil <i class="bi bi-chevron-down chev"></i></a>
-      </nav>
-    </aside>
-
-    <!-- CONTEÚDO -->
-    <main class="content">
-
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class="flash-list" role="status">
-          {% for category, message in messages %}
-          <p class="flash flash-{{ category }}">{{ message }}</p>
-          {% endfor %}
-        </div>
-        {% endif %}
-      {% endwith %}
-
+{% block content %}
       <div class="welcome">
         <h1>Bem - vindo, <span>{{ nome }}!</span></h1>
-        <button type="button" class="btn-venda" id="open-sale">+ Nova Venda</button>
+        <button type="button" class="btn-venda" data-open-dialog="transaction-dialog">+ Nova Venda</button>
       </div>
 
       <section class="stats">
@@ -97,7 +54,7 @@
         <article class="panel payment-panel">
           <h2 class="panel-title">Métodos de pagamento (7 dias)</h2>
           <div class="payment-body">
-            <div class="donut" id="donut" data-ring="{{ payments.gradient }}">
+            <div class="donut" data-ring="{{ payments.gradient }}">
               <span>{{ payments.center_label }}{% if payments.center_pct %}<br><b>{{ payments.center_pct }}</b>{% endif %}</span>
             </div>
             {% if payments.segments %}
@@ -113,85 +70,27 @@
 
       <section class="panel transactions">
         <h2 class="panel-title green">Últimas transações</h2>
-        <table>
-          <thead>
-            <tr><th>Data/Hora</th><th>Descrição</th><th class="right">Valor</th></tr>
-          </thead>
-          <tbody>
-            {% for row in recent %}
-            <tr>
-              <td>{{ row.when }}</td>
-              <td>{{ row.description }}</td>
-              <td class="right {{ 'cost' if row.is_cost else '' }}">{{ row.amount }}</td>
-            </tr>
-            {% else %}
-            <tr><td colspan="3" class="empty">Nenhuma transação ainda. Use “+ Nova Venda” para registrar a primeira.</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Data/Hora</th><th>Descrição</th><th class="right">Valor</th></tr>
+            </thead>
+            <tbody>
+              {% for row in recent %}
+              <tr>
+                <td>{{ row.when }}</td>
+                <td>{{ row.description }}</td>
+                <td class="right {{ 'cost' if row.is_cost else '' }}">{{ row.amount }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="3" class="empty">Nenhuma transação ainda. Use “+ Nova Venda” para registrar a primeira.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </section>
+{% endblock %}
 
-    </main>
-  </div>
-
-  <!-- NOVA TRANSAÇÃO -->
-  <dialog id="sale-dialog" class="sale-dialog" aria-labelledby="sale-title">
-    <form method="post" action="{{ url_for('transaction.add_transaction') }}" class="sale-form">
-      <h2 id="sale-title">Nova transação</h2>
-
-      <fieldset class="type-switch">
-        <legend class="sr-only">Tipo</legend>
-        <label><input type="radio" name="type_trans" value="sale" checked> Venda</label>
-        <label><input type="radio" name="type_trans" value="cost"> Despesa</label>
-      </fieldset>
-
-      <label class="field">Valor (R$)
-        <input type="text" name="amount" inputmode="decimal" placeholder="0,00" autocomplete="off" required>
-      </label>
-
-      <label class="field" id="payment-field">Forma de pagamento
-        <select name="payment_method">
-          <option value="pix">Pix</option>
-          <option value="dinheiro">Dinheiro</option>
-          <option value="debito">Débito</option>
-          <option value="credito">Crédito</option>
-        </select>
-      </label>
-
-      <label class="field">Descrição (opcional)
-        <input type="text" name="description" maxlength="80" placeholder="Ex.: 2 espetinhos" autocomplete="off">
-      </label>
-
-      <div class="sale-actions">
-        <button type="button" class="btn-ghost" id="close-sale">Cancelar</button>
-        <button type="submit" class="btn-venda">Salvar</button>
-      </div>
-    </form>
-  </dialog>
-
-  <script>
-    const dialog = document.getElementById("sale-dialog");
-    const paymentField = document.getElementById("payment-field");
-    const paymentSelect = paymentField.querySelector("select");
-
-    const donut = document.getElementById("donut");
-    if (donut.dataset.ring) donut.style.background = "conic-gradient(" + donut.dataset.ring + ")";
-
-    document.getElementById("open-sale").addEventListener("click", () => dialog.showModal());
-    document.getElementById("close-sale").addEventListener("click", () => dialog.close());
-    dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
-
-    // Despesa não tem forma de pagamento
-    dialog.querySelectorAll('input[name="type_trans"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const isSale = radio.value === "sale" && radio.checked;
-        if (radio.checked) {
-          paymentField.hidden = !isSale;
-          paymentSelect.disabled = !isSale;
-        }
-      });
-    });
-  </script>
-
-</body>
-</html>
+{% block dialogs %}
+  {% include "dashboards/_transaction_dialog.html" %}
+{% endblock %}

@@ -248,7 +248,7 @@
   td.empty { text-align: center; padding: 28px 10px; }
 
   /* ---------- Nova transação ---------- */
-  .sale-dialog {
+  .app-dialog {
     margin: auto;
     width: min(92vw, 400px);
     padding: 0;
@@ -258,9 +258,9 @@
     color: var(--text);
     color-scheme: dark;
   }
-  .sale-dialog::backdrop { background: rgba(2, 16, 22, .7); }
-  .sale-form { display: grid; gap: 14px; padding: 20px; }
-  .sale-form h2 { font-size: 1.05rem; font-weight: 600; }
+  .app-dialog::backdrop { background: rgba(2, 16, 22, .7); }
+  .app-form { display: grid; gap: 14px; padding: 20px; }
+  .app-form h2 { font-size: 1.05rem; font-weight: 600; }
   .type-switch { border: 0; display: flex; gap: 8px; }
   .type-switch label {
     flex: 1;
@@ -289,7 +289,7 @@
   }
   .field input:focus-visible,
   .field select:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
-  .sale-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+  .app-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
   .btn-ghost {
     background: none;
     border: 1px solid var(--line);
@@ -319,4 +319,161 @@
     .stats { grid-template-columns: 1fr; }
     .charts { grid-template-columns: 1fr; }
     .payment-panel { padding-bottom: 24px; }
+  }
+
+  /* ===================== Páginas: Transações, Estoque e Perfil ===================== */
+
+  .welcome h1.green { color: var(--green); }
+
+  /* menu: botão Sair e links */
+  button.menu-item {
+    width: 100%;
+    background: none;
+    border: 0;
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .logout-form { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .icon-btn { display: inline-flex; }
+  .icon-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 6px; }
+
+  /* tabelas */
+  .table-scroll { overflow-x: auto; }
+  th.center, td.center { text-align: center; }
+  td.actions { white-space: nowrap; }
+  .hint { font-size: .75rem; color: var(--muted); margin-top: 10px; }
+  small.hint { margin-top: 0; }
+
+  .icon-action {
+    background: none;
+    border: 0;
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .icon-action:hover { color: var(--green); background: var(--panel-2); }
+  .icon-action.danger:hover { color: var(--red); }
+  .icon-action:focus-visible,
+  .link-btn:focus-visible,
+  .action-card:focus-visible,
+  .search button:focus-visible,
+  .btn-danger:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 12px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 600;
+  }
+  .badge-concluido { background: var(--green); color: #03251a; }
+  .badge-pendente { background: #ffe600; color: #2b2500; }
+
+  /* Transações: filtros e totais */
+  .filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: end;
+  }
+  .period { border: 0; display: flex; flex-wrap: wrap; gap: 12px; align-items: end; min-width: 0; }
+  .period legend { font-size: .95rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+  .period .field { flex: 1 1 140px; }
+  .search { position: relative; }
+  .search input { padding-right: 44px; }
+  .search button {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: 0;
+    color: var(--muted);
+    font-size: 1rem;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .search button:hover { color: var(--green); }
+  .transactions-panel { min-height: 160px; }
+  .summary { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 16px; }
+
+  /* Estoque */
+  .action-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    color: var(--text);
+    font: inherit;
+  }
+  .action-card i { font-size: 1.9rem; flex: none; }
+  .action-card span { display: grid; font-size: .8rem; color: var(--muted); }
+  .action-card strong { font-size: 1.25rem; font-weight: 600; color: var(--text); }
+  button.action-card { cursor: pointer; }
+  button.action-card:hover { background: var(--panel-2); }
+  .stock-panel { min-height: 200px; }
+  .link-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+  .link-btn:hover { color: var(--green); text-decoration-color: var(--green); }
+
+  /* Diálogos de confirmação e detalhes */
+  .btn-danger {
+    background: var(--red);
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: .85rem;
+    padding: 7px 20px;
+    border-radius: 999px;
+    transition: filter .2s;
+  }
+  .btn-danger:hover { filter: brightness(1.1); }
+  .dialog-text { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+  .details { display: grid; gap: 10px; font-size: .85rem; }
+  .details div { display: grid; grid-template-columns: 140px 1fr; gap: 8px; }
+  .details dt { color: var(--muted); }
+  .details dd { margin: 0; overflow-wrap: anywhere; }
+
+  /* Perfil */
+  .profile-card { display: flex; align-items: center; gap: 16px; }
+  .avatar {
+    width: 56px;
+    height: 56px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--green);
+    color: #03251a;
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  .profile-card .meta { display: grid; gap: 2px; font-size: .85rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+  .profile-card .meta strong { color: var(--text); font-size: 1.05rem; }
+  .profile-form { display: grid; gap: 14px; max-width: 420px; }
+  .field input[readonly] { opacity: .7; }
+
+  @media (max-width: 860px) {
+    .filters { grid-template-columns: 1fr; }
+    .summary { grid-template-columns: 1fr; }
+    .details div { grid-template-columns: 1fr; gap: 2px; }
   }

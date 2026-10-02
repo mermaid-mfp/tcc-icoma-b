@@ -16,6 +16,29 @@ class TransactionRepository:
         doc_ref.set(transaction.to_dict())
         return transaction.id
 
+    def get_transaction(self, transaction_id):
+        if not db:
+            return None
+
+        doc = db.collection(self.collection_name).document(transaction_id).get()
+        if not doc.exists:
+            return None
+        return Transaction.from_dict(doc.to_dict(), doc.id)
+
+    def update_transaction(self, transaction_id, fields):
+        if not db:
+            return False
+
+        db.collection(self.collection_name).document(transaction_id).update(fields)
+        return True
+
+    def delete_transaction(self, transaction_id):
+        if not db:
+            return False
+
+        db.collection(self.collection_name).document(transaction_id).delete()
+        return True
+
     def get_all_transactions(self, user_id=None):
         if not db:
             return []
